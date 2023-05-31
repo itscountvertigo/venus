@@ -14,8 +14,15 @@ typedef struct Position {
   float angle;
 } Position;
 
+typedef struct IR 
+{
+  int left_sensor = 0;
+  int right_sensor = 0;
+} IR;
+
 // function declarations:
 Position kine_measure(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
+IR ir_measure();
 
 Position current_pos = {0, 0, 3.1415/2};
 
@@ -51,4 +58,22 @@ void loop()
 
   delay(10000);
 
+}
+
+void servo_attach()
+{
+  servoLeft.attach(12);
+  servoRight.attach(13);
+
+  servoGrabber.attach(10);
+  servoSensor.attach(11);
+}
+
+void servo_detach()
+{
+  servoLeft.detach();
+  servoRight.detach();
+
+  servoGrabber.detach();
+  servoSensor.detach();
 }
