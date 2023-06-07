@@ -6,7 +6,7 @@ const float WHEEL_DIAMETER = 0.066;     // m
 const int NUM_OF_SPOKES = 32;
 const float DIST_BETWEEN_WHEELS = 0.11;   // m
 
-const float left_wheel_scaling = 1.2;
+//const float left_wheel_scaling = 1.2;
 
 typedef struct Position {
   float x;
@@ -22,15 +22,18 @@ typedef struct IR
 
 // function declarations:
 Position kine_measure(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
-IR ir_measure();
-
-Position current_pos = {0, 0, 3.1415/2};
+//IR ir_measure();
 
 Servo servoLeft;
 Servo servoRight;
 
 Servo servoGrabber;
 Servo servoSensor;
+
+void servo_attach();
+void servo_detach();
+
+Position current_pos = {0, 0, 3.1415/2};
 
 void setup()
 {
@@ -58,22 +61,4 @@ void loop()
 
   delay(10000);
 
-}
-
-void servo_attach()
-{
-  servoLeft.attach(12);
-  servoRight.attach(13);
-
-  servoGrabber.attach(10);
-  servoSensor.attach(11);
-}
-
-void servo_detach()
-{
-  servoLeft.detach();
-  servoRight.detach();
-
-  servoGrabber.detach();
-  servoSensor.detach();
 }
