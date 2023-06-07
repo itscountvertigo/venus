@@ -6,25 +6,11 @@ const float WHEEL_DIAMETER = 0.066;     // m
 const int NUM_OF_SPOKES = 32;
 const float DIST_BETWEEN_WHEELS = 0.11;   // m
 
-const float one = 1;
-
-//const float left_wheel_scaling = 1.2;
-
 typedef struct Position {
   float x;
   float y;
   float angle;
 } Position;
-
-typedef struct IR 
-{
-  int left_sensor = 0;
-  int right_sensor = 0;
-} IR;
-
-// function declarations:
-Position kine_measure(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
-//IR ir_measure();
 
 Servo servoLeft;
 Servo servoRight;
@@ -32,32 +18,30 @@ Servo servoRight;
 Servo servoGrabber;
 Servo servoSensor;
 
+// function declarations:
+
 void servo_attach();
 void servo_detach();
 
-Position current_pos = {0, 0, 3.1415/2};
+Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
+
+Position move_forward_ms(float ms);
+Position spin_right_rad(float rad);
+Position spin_left_rad(float rad);
+
+Position current_pos = {0, 0, PI/2};
 
 void setup()
 {
   Serial.begin(9600);
   
-  pinMode(CNY1, INPUT);
-  pinMode(CNY2, INPUT);
-  pinMode(CNY3, INPUT); 
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT); 
 }  
 
 void loop()
 {
-  servo_attach();
-  
-  // 1300 clockwise, 1500 still, 1700 counterclockwise
-  servoLeft.writeMicroseconds(1700);
-  servoRight.writeMicroseconds(1300);
-
-  current_pos = kine_measure(current_pos, 0, 1, 20000, 5, 500);
-
-  servo_detach();
-
   Serial.println("X: ");
   Serial.println(current_pos.x);
   Serial.println("Y: ");
