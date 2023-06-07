@@ -40,6 +40,10 @@ Position current_pos = {0, 0, 3.1415/2};
 void setup()
 {
   Serial.begin(9600);
+  
+  pinMode(CNY1, INPUT);
+  pinMode(CNY2, INPUT);
+  pinMode(CNY3, INPUT); 
 }  
 
 void loop()
