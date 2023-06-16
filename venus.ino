@@ -44,13 +44,15 @@ void setup()
 
 void loop()
 {
+  move_forward_ms(1000); 
   Serial.println("X: ");
   Serial.println(current_pos.x);
   Serial.println("Y: ");
   Serial.println(current_pos.y);
   Serial.println("Angle: ");
   Serial.println(current_pos.angle);
-
+  delay(500); 
+   
   //detect_cliff();
   
   //if (ultrasound_read() < 50) {
