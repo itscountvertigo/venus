@@ -5,6 +5,9 @@
 const float WHEEL_DIAMETER = 0.066;     // m
 const int NUM_OF_SPOKES = 32;
 const float DIST_BETWEEN_WHEELS = 0.11;   // m
+const int KINE_DELTA_MS = 500;
+const int ENCODER_DELTA_MS = 500;
+
 
 typedef struct Position {
   float x;
@@ -23,7 +26,7 @@ Servo servoSensor;
 void servo_attach();
 void servo_detach();
 
-Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
+Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms);
 
 Position move_forward_ms(float ms);
 Position spin_right_rad(float rad);
@@ -52,6 +55,7 @@ void loop()
   Serial.println("Angle: ");
   Serial.println(current_pos.angle);
   delay(500); 
+
    
   //detect_cliff();
   

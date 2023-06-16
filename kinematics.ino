@@ -24,7 +24,8 @@ float ICC_omega;
 float ICC_x;
 float ICC_y;
 
-Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms) 
+
+Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms) 
 {
   Position inter_pos = curr_pos;
    
@@ -33,14 +34,14 @@ Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise
   unsigned long kine_ms = millis();
   
   while (millis() < timer_ms + driving_ms) {
-    if (millis() >= encoder_ms + encoder_delta_ms) {
+    if (millis() >= encoder_ms + ENCODER_DELTA_MS) {
       spoke_read();
       
       encoder_ms = millis();
     }
 
-    if (millis() >= kine_ms + kine_delta_ms) {
-      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, kine_delta_ms, passed_spokes_l, passed_spokes_r);
+    if (millis() >= kine_ms + KINE_DELTA_MS) {
+      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, KINE_DELTA_MS, passed_spokes_l, passed_spokes_r);
 
       // reset counters and timers
       passed_spokes_l = 0;
@@ -51,9 +52,10 @@ Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise
   }
   
   return inter_pos;
+   
 }
 
-Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms) 
+Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise) 
 {
   Position inter_pos = curr_pos;
    
@@ -65,14 +67,14 @@ Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clo
            round(1000 * inter_pos.y) == round(1000 * target_pos.y) &&
            round(1000 * inter_pos.angle) == round(1000 * target_pos.angle) 
           )) {
-    if (millis() >= encoder_ms + encoder_delta_ms) {
+    if (millis() >= encoder_ms + ENCODER_DELTA_MS) {
       spoke_read();
       
       encoder_ms = millis();
     }
 
-    if (millis() >= kine_ms + kine_delta_ms) {
-      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, kine_delta_ms, passed_spokes_l, passed_spokes_r);
+    if (millis() >= kine_ms + KINE_DELTA_MS) {
+      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, KINE_DELTA_MS, passed_spokes_l, passed_spokes_r);
 
       // reset counters and timers
       passed_spokes_l = 0;
@@ -102,7 +104,7 @@ void spoke_read()
   }
 }
 
-Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, int kine_delta_ms, int passed_spokes_l, int passed_spokes_r)
+Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, int passed_spokes_l, int passed_spokes_r)
 {
   Position inter_pos = curr_pos;
   if (l_wheel_clockwise == 0) {
@@ -115,17 +117,18 @@ Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwi
   meters_traveled_l = 0.5 * passed_spokes_l / NUM_OF_SPOKES * PI * WHEEL_DIAMETER;
   meters_traveled_r = 0.5 * passed_spokes_r / NUM_OF_SPOKES * PI * WHEEL_DIAMETER;
   
-  avg_vel_l = meters_traveled_l / (kine_delta_ms / 1000);      // unit m/s
-  avg_vel_r = meters_traveled_r / (kine_delta_ms / 1000);      // unit m/s
-
+  avg_vel_l = meters_traveled_l / (KINE_DELTA_MS / 1000);      // unit m/s
+  avg_vel_r = meters_traveled_r / (KINE_DELTA_MS / 1000);      // unit m/s
+  Serial.println("dfvkokdovkeekà: "); 
+  Serial.println(KINE_DELTA_MS); 
   // implementation of formulas found in source [1]
   
   if (round(1000 * avg_vel_l) == round(1000 * avg_vel_r)) {                  // straight line movement!
-    inter_pos.x = inter_pos.x + (avg_vel_l + avg_vel_r) / 2 * cos(inter_pos.angle) * (kine_delta_ms / 1000);
-    inter_pos.y = inter_pos.y + (avg_vel_l + avg_vel_r) / 2 * sin(inter_pos.angle) * (kine_delta_ms / 1000);
+    inter_pos.x = inter_pos.x + (avg_vel_l + avg_vel_r) / 2 * cos(inter_pos.angle) * (KINE_DELTA_MS / 1000);
+    inter_pos.y = inter_pos.y + (avg_vel_l + avg_vel_r) / 2 * sin(inter_pos.angle) * (KINE_DELTA_MS / 1000);
   }
   else if (/*value_near(avg_vel_l, avg_vel_r * -1, 0.1) == 1*/ 0) {        // you spin me right round baby right round
-    inter_pos.angle = inter_pos.angle + (avg_vel_l + avg_vel_r) * (kine_delta_ms / 1000) / DIST_BETWEEN_WHEELS;
+    inter_pos.angle = inter_pos.angle + (avg_vel_l + avg_vel_r) * (KINE_DELTA_MS / 1000) / DIST_BETWEEN_WHEELS;
   }
   else {
     ICC_R = DIST_BETWEEN_WHEELS / 2 * (avg_vel_l + avg_vel_r) / (avg_vel_r - avg_vel_l);
@@ -134,15 +137,15 @@ Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwi
     ICC_x = inter_pos.x - ICC_R * sin(inter_pos.angle);
     ICC_y = inter_pos.y + ICC_R * cos(inter_pos.angle);
     
-    inter_pos.x = cos(ICC_omega * (kine_delta_ms / 1000)) * ICC_R * sin(inter_pos.angle)
-                + sin(ICC_omega * (kine_delta_ms / 1000)) * ICC_R * cos(inter_pos.angle)
+    inter_pos.x = cos(ICC_omega * (KINE_DELTA_MS / 1000)) * ICC_R * sin(inter_pos.angle)
+                + sin(ICC_omega * (KINE_DELTA_MS / 1000)) * ICC_R * cos(inter_pos.angle)
                 + ICC_x;
 
-    inter_pos.y = sin(ICC_omega * (kine_delta_ms / 1000)) * ICC_R * sin(inter_pos.angle)
-                - cos(ICC_omega * (kine_delta_ms / 1000)) * ICC_R * cos(inter_pos.angle)
+    inter_pos.y = sin(ICC_omega * (KINE_DELTA_MS / 1000)) * ICC_R * sin(inter_pos.angle)
+                - cos(ICC_omega * (KINE_DELTA_MS / 1000)) * ICC_R * cos(inter_pos.angle)
                 + ICC_y;
 
-    inter_pos.angle = inter_pos.angle + ICC_omega * (kine_delta_ms / 1000);
+    inter_pos.angle = inter_pos.angle + ICC_omega * (KINE_DELTA_MS / 1000);
   }
 
   return inter_pos;
