@@ -176,14 +176,14 @@ Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwi
   avg_vel_r = meters_traveled_r / (KINE_DELTA_MS / 1000);      // unit m/s
 
   // implementation of formulas found in source [1]
-  int roundL = round(1000 * avg_vel_l);
-  int roundR = round(1000 * avg_vel_r);
+  int roundL = round(10 * avg_vel_l);
+  int roundR = round(10 * avg_vel_r);
   Serial.print("L = ");
   Serial.println(roundL);
   Serial.print("R = ");
   Serial.println(roundR);
   
-  if (round(1000 * avg_vel_l) == round(1000 * avg_vel_r)) {                  // straight line movement!
+  if (round(10 * avg_vel_l) == round(10 * avg_vel_r)) {                  // straight line movement!
     inter_pos.x = inter_pos.x + (avg_vel_l + avg_vel_r) / 2 * cos(inter_pos.angle) * (KINE_DELTA_MS / 1000);
     inter_pos.y = inter_pos.y + (avg_vel_l + avg_vel_r) / 2 * sin(inter_pos.angle) * (KINE_DELTA_MS / 1000);
 

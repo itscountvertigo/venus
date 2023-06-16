@@ -5,8 +5,8 @@
 const float WHEEL_DIAMETER = 0.066;     // m
 const int NUM_OF_SPOKES = 32;
 const float DIST_BETWEEN_WHEELS = 0.11;   // m
-const int KINE_DELTA_MS = 500;
-const int ENCODER_DELTA_MS = 5;
+const float KINE_DELTA_MS = 500;
+const float ENCODER_DELTA_MS = 5;
 
 
 typedef struct Position {
