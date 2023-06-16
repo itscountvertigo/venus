@@ -38,6 +38,8 @@ void move_forward_until_edge();
 void spin_right_rad(float rad);
 void spin_left_rad(float rad);
 
+long ultrasound_read();
+
 Position current_pos = {0, 0, PI/2};
 
 void setup()
@@ -50,12 +52,8 @@ void setup()
 }  
 
 void loop()
-{  
-//  find_corner();
-
-  move_forward_until_edge();
-  spin_right_rad(PI/2);
-
+{
+  move_forward_ms(1000); 
   
   Serial.println("X: ");
   Serial.println(current_pos.x);
@@ -63,7 +61,20 @@ void loop()
   Serial.println(current_pos.y);
   Serial.println("Angle: ");
   Serial.println(current_pos.angle);
+  delay(500); 
+   
+  //detect_cliff();
+  
+  //if (ultrasound_read() < 50) {
+    //while (ultrasound_read() >= 27){
+      //move_forward_ms(500); 
+   // }
+  //}
+  
 
-  delay(10000);
+  //Serial.println(ultrasound_read()); 
 
+  delay(100);
+  
 }
+

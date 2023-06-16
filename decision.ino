@@ -11,6 +11,13 @@ int detect_tape() {
   float color_l = analogRead(A0);
   float color_r = analogRead(A1);
   float color_out = analogRead(A2);
+
+  Serial.println("L: ");
+  Serial.println(color_l);
+  Serial.println("R: ");
+  Serial.println(color_r);
+  Serial.println("Out: ");
+  Serial.println(color_out);
   
   if (color_l < 10 && color_r < 10) {
     spin_right_rad(PI/2);    // might need to be changed since the robot doesn't always approach at a 90 degree angle to the boundary
