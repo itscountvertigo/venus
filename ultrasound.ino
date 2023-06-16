@@ -1,4 +1,4 @@
-const int pingPin = 9;
+/*const int pingPin = 9;
 void setup() {
 Serial.begin(9600);
 
@@ -33,3 +33,5 @@ long microsecondsToCentimeters(long microseconds){
   return microseconds/29/2;
   
   }
+
+*/

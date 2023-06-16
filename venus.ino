@@ -12,6 +12,13 @@ typedef struct Position {
   float angle;
 } Position;
 
+void print_pos(Position pos) 
+{
+  Serial.println("x: "); Serial.print(pos.x);
+  Serial.println("y: "); Serial.print(pos.y);
+  Serial.println("a: "); Serial.println(pos.angle);  
+}
+
 Servo servoLeft;
 Servo servoRight;
 
@@ -24,10 +31,12 @@ void servo_attach();
 void servo_detach();
 
 Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
+Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms);
 
-Position move_forward_ms(float ms);
-Position spin_right_rad(float rad);
-Position spin_left_rad(float rad);
+void move_forward_ms(float ms);
+void move_forward_until_edge();
+void spin_right_rad(float rad);
+void spin_left_rad(float rad);
 
 Position current_pos = {0, 0, PI/2};
 
@@ -41,7 +50,13 @@ void setup()
 }  
 
 void loop()
-{
+{  
+//  find_corner();
+
+  move_forward_until_edge();
+  spin_right_rad(PI/2);
+
+  
   Serial.println("X: ");
   Serial.println(current_pos.x);
   Serial.println("Y: ");

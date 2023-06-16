@@ -53,6 +53,58 @@ Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise
   return inter_pos;
 }
 
+Position kine_until_bound(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms)
+{
+  Position inter_pos = curr_pos;
+   
+  unsigned long timer_ms = millis();
+  unsigned long encoder_ms = millis();
+  unsigned long kine_ms = millis();
+  unsigned long tape_ms = millis();
+
+  float color_l = analogRead(A0);
+  float color_r = analogRead(A1);
+  float color_out = analogRead(A2);
+
+//  Serial.println(color_l);
+//  Serial.println(color_r);
+  
+  while (color_l > 5 && color_r > 5) {
+    if (millis() >= encoder_ms + encoder_delta_ms) {
+      spoke_read();
+      
+      encoder_ms = millis();
+    }
+
+    if (millis() >= kine_ms + kine_delta_ms) {
+      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, kine_delta_ms, passed_spokes_l, passed_spokes_r);
+
+      // reset counters and timers
+      passed_spokes_l = 0;
+      passed_spokes_r = 0;  
+      
+      kine_ms = millis();
+
+      Serial.println("In kine_until_bound: ");
+      print_pos(inter_pos);
+      Serial.println();
+    }
+    
+    if (millis() >= tape_ms + 100) {
+      color_l = analogRead(A0);
+      color_r = analogRead(A1);
+      color_out = analogRead(A2);
+
+//      Serial.println(color_l);
+//      Serial.println(color_r);
+
+      tape_ms = millis();
+    }
+  }
+
+  return inter_pos;
+}
+
 Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms) 
 {
   Position inter_pos = curr_pos;
@@ -61,9 +113,9 @@ Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clo
   unsigned long encoder_ms = millis();
   unsigned long kine_ms = millis();
   
-  while (!(round(1000 * inter_pos.x) == round(1000 * target_pos.x) && 
-           round(1000 * inter_pos.y) == round(1000 * target_pos.y) &&
-           round(1000 * inter_pos.angle) == round(1000 * target_pos.angle) 
+  while (!(round(100 * inter_pos.x) == round(100 * target_pos.x) && 
+           round(100 * inter_pos.y) == round(100 * target_pos.y) &&
+           round(100 * normalize_radians(inter_pos.angle)) == round(100 * normalize_radians(target_pos.angle)) 
           )) {
     if (millis() >= encoder_ms + encoder_delta_ms) {
       spoke_read();
@@ -79,6 +131,8 @@ Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clo
       passed_spokes_r = 0;  
       
       kine_ms = millis();
+
+      print_pos(inter_pos);
     }
   }
 
@@ -105,6 +159,7 @@ void spoke_read()
 Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, int kine_delta_ms, int passed_spokes_l, int passed_spokes_r)
 {
   Position inter_pos = curr_pos;
+  
   if (l_wheel_clockwise == 0) {
     passed_spokes_l *= -1;
   }
@@ -114,6 +169,8 @@ Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwi
   
   meters_traveled_l = 0.5 * passed_spokes_l / NUM_OF_SPOKES * PI * WHEEL_DIAMETER;
   meters_traveled_r = 0.5 * passed_spokes_r / NUM_OF_SPOKES * PI * WHEEL_DIAMETER;
+
+  Serial.println(kine_delta_ms);
   
   avg_vel_l = meters_traveled_l / (kine_delta_ms / 1000);      // unit m/s
   avg_vel_r = meters_traveled_r / (kine_delta_ms / 1000);      // unit m/s
@@ -123,11 +180,19 @@ Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwi
   if (round(1000 * avg_vel_l) == round(1000 * avg_vel_r)) {                  // straight line movement!
     inter_pos.x = inter_pos.x + (avg_vel_l + avg_vel_r) / 2 * cos(inter_pos.angle) * (kine_delta_ms / 1000);
     inter_pos.y = inter_pos.y + (avg_vel_l + avg_vel_r) / 2 * sin(inter_pos.angle) * (kine_delta_ms / 1000);
+
+    Serial.println("In kine math fwd: ");
+  print_pos(inter_pos);
+  Serial.println();
   }
-  else if (/*value_near(avg_vel_l, avg_vel_r * -1, 0.1) == 1*/ 0) {        // you spin me right round baby right round
+  else if (round(10 * avg_vel_l) == -round(10 * avg_vel_r)) {        // you spin me right round baby right round
     inter_pos.angle = inter_pos.angle + (avg_vel_l + avg_vel_r) * (kine_delta_ms / 1000) / DIST_BETWEEN_WHEELS;
   }
   else {
+      Serial.println("In kine_math else: ");
+      print_pos(inter_pos);
+      Serial.println();
+    
     ICC_R = DIST_BETWEEN_WHEELS / 2 * (avg_vel_l + avg_vel_r) / (avg_vel_r - avg_vel_l);
     ICC_omega = (avg_vel_r - avg_vel_l) / DIST_BETWEEN_WHEELS;
     
@@ -146,4 +211,15 @@ Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwi
   }
 
   return inter_pos;
+}
+
+float normalize_radians(float rad) 
+{
+  rad = fmod(rad, 2*PI);
+  
+  if (rad < 0) {
+    rad += 2*PI;
+  }
+
+  return rad;
 }
