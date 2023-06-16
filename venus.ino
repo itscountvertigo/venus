@@ -6,7 +6,7 @@ const float WHEEL_DIAMETER = 0.066;     // m
 const int NUM_OF_SPOKES = 32;
 const float DIST_BETWEEN_WHEELS = 0.11;   // m
 const int KINE_DELTA_MS = 500;
-const int ENCODER_DELTA_MS = 500;
+const int ENCODER_DELTA_MS = 5;
 
 
 typedef struct Position {
@@ -33,12 +33,8 @@ Servo servoSensor;
 void servo_attach();
 void servo_detach();
 
-<<<<<<< HEAD
 Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms);
-=======
-Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
-Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms);
->>>>>>> 1a0a5698961e1fd106f1cfd93a3ae4160c1ec8b2
+Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise);
 
 void move_forward_ms(float ms);
 void move_forward_until_edge();
@@ -85,4 +81,3 @@ void loop()
   delay(100);
   
 }
-

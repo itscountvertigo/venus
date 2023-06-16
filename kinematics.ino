@@ -41,7 +41,7 @@ Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise
     }
 
     if (millis() >= kine_ms + KINE_DELTA_MS) {
-      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, KINE_DELTA_MS, passed_spokes_l, passed_spokes_r);
+      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, passed_spokes_l, passed_spokes_r);
 
       // reset counters and timers
       passed_spokes_l = 0;
@@ -55,10 +55,7 @@ Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise
    
 }
 
-<<<<<<< HEAD
-Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise) 
-=======
-Position kine_until_bound(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms)
+Position kine_until_bound(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise)
 {
   Position inter_pos = curr_pos;
    
@@ -75,14 +72,14 @@ Position kine_until_bound(Position curr_pos, int l_wheel_clockwise, int r_wheel_
 //  Serial.println(color_r);
   
   while (color_l > 5 && color_r > 5) {
-    if (millis() >= encoder_ms + encoder_delta_ms) {
+    if (millis() >= encoder_ms + ENCODER_DELTA_MS) {
       spoke_read();
       
       encoder_ms = millis();
     }
 
-    if (millis() >= kine_ms + kine_delta_ms) {
-      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, kine_delta_ms, passed_spokes_l, passed_spokes_r);
+    if (millis() >= kine_ms + KINE_DELTA_MS) {
+      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, passed_spokes_l, passed_spokes_r);
 
       // reset counters and timers
       passed_spokes_l = 0;
@@ -110,8 +107,7 @@ Position kine_until_bound(Position curr_pos, int l_wheel_clockwise, int r_wheel_
   return inter_pos;
 }
 
-Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms) 
->>>>>>> 1a0a5698961e1fd106f1cfd93a3ae4160c1ec8b2
+Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise) 
 {
   Position inter_pos = curr_pos;
    
@@ -130,7 +126,7 @@ Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clo
     }
 
     if (millis() >= kine_ms + KINE_DELTA_MS) {
-      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, KINE_DELTA_MS, passed_spokes_l, passed_spokes_r);
+      inter_pos = kine_math(curr_pos, l_wheel_clockwise, r_wheel_clockwise, passed_spokes_l, passed_spokes_r);
 
       // reset counters and timers
       passed_spokes_l = 0;
@@ -175,33 +171,22 @@ Position kine_math(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwi
   
   meters_traveled_l = 0.5 * passed_spokes_l / NUM_OF_SPOKES * PI * WHEEL_DIAMETER;
   meters_traveled_r = 0.5 * passed_spokes_r / NUM_OF_SPOKES * PI * WHEEL_DIAMETER;
-
-  Serial.println(kine_delta_ms);
   
   avg_vel_l = meters_traveled_l / (KINE_DELTA_MS / 1000);      // unit m/s
   avg_vel_r = meters_traveled_r / (KINE_DELTA_MS / 1000);      // unit m/s
-  Serial.println("dfvkokdovkeekà: "); 
-  Serial.println(KINE_DELTA_MS); 
+
   // implementation of formulas found in source [1]
   
   if (round(1000 * avg_vel_l) == round(1000 * avg_vel_r)) {                  // straight line movement!
-<<<<<<< HEAD
     inter_pos.x = inter_pos.x + (avg_vel_l + avg_vel_r) / 2 * cos(inter_pos.angle) * (KINE_DELTA_MS / 1000);
     inter_pos.y = inter_pos.y + (avg_vel_l + avg_vel_r) / 2 * sin(inter_pos.angle) * (KINE_DELTA_MS / 1000);
-  }
-  else if (/*value_near(avg_vel_l, avg_vel_r * -1, 0.1) == 1*/ 0) {        // you spin me right round baby right round
-    inter_pos.angle = inter_pos.angle + (avg_vel_l + avg_vel_r) * (KINE_DELTA_MS / 1000) / DIST_BETWEEN_WHEELS;
-=======
-    inter_pos.x = inter_pos.x + (avg_vel_l + avg_vel_r) / 2 * cos(inter_pos.angle) * (kine_delta_ms / 1000);
-    inter_pos.y = inter_pos.y + (avg_vel_l + avg_vel_r) / 2 * sin(inter_pos.angle) * (kine_delta_ms / 1000);
 
     Serial.println("In kine math fwd: ");
-  print_pos(inter_pos);
-  Serial.println();
+    print_pos(inter_pos);
+    Serial.println();
   }
   else if (round(10 * avg_vel_l) == -round(10 * avg_vel_r)) {        // you spin me right round baby right round
-    inter_pos.angle = inter_pos.angle + (avg_vel_l + avg_vel_r) * (kine_delta_ms / 1000) / DIST_BETWEEN_WHEELS;
->>>>>>> 1a0a5698961e1fd106f1cfd93a3ae4160c1ec8b2
+    inter_pos.angle = inter_pos.angle + (avg_vel_l + avg_vel_r) * (KINE_DELTA_MS / 1000) / DIST_BETWEEN_WHEELS;
   }
   else {
       Serial.println("In kine_math else: ");
