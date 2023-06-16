@@ -15,6 +15,13 @@ typedef struct Position {
   float angle;
 } Position;
 
+void print_pos(Position pos) 
+{
+  Serial.println("x: "); Serial.print(pos.x);
+  Serial.println("y: "); Serial.print(pos.y);
+  Serial.println("a: "); Serial.println(pos.angle);  
+}
+
 Servo servoLeft;
 Servo servoRight;
 
@@ -26,11 +33,17 @@ Servo servoSensor;
 void servo_attach();
 void servo_detach();
 
+<<<<<<< HEAD
 Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms);
+=======
+Position kine_ms(Position curr_pos, int l_wheel_clockwise, int r_wheel_clockwise, float driving_ms, float encoder_delta_ms, float kine_delta_ms);
+Position kine_target_pos(Position curr_pos, Position target_pos, int l_wheel_clockwise, int r_wheel_clockwise, float encoder_delta_ms, float kine_delta_ms);
+>>>>>>> 1a0a5698961e1fd106f1cfd93a3ae4160c1ec8b2
 
-Position move_forward_ms(float ms);
-Position spin_right_rad(float rad);
-Position spin_left_rad(float rad);
+void move_forward_ms(float ms);
+void move_forward_until_edge();
+void spin_right_rad(float rad);
+void spin_left_rad(float rad);
 
 long ultrasound_read();
 
@@ -48,6 +61,7 @@ void setup()
 void loop()
 {
   move_forward_ms(1000); 
+  
   Serial.println("X: ");
   Serial.println(current_pos.x);
   Serial.println("Y: ");
