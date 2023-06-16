@@ -64,7 +64,7 @@ void loop()
   Serial.println(current_pos.y);
   Serial.println("Angle: ");
   Serial.println(current_pos.angle);
-  delay(500); 
+  delay(2000); 
 
    
   //detect_cliff();
