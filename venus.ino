@@ -29,6 +29,8 @@ Position move_forward_ms(float ms);
 Position spin_right_rad(float rad);
 Position spin_left_rad(float rad);
 
+long ultrasound_read();
+
 Position current_pos = {0, 0, PI/2};
 
 void setup()
@@ -49,6 +51,18 @@ void loop()
   Serial.println("Angle: ");
   Serial.println(current_pos.angle);
 
-  delay(10000);
+  //detect_cliff();
+  
+  //if (ultrasound_read() < 50) {
+    //while (ultrasound_read() >= 27){
+      //move_forward_ms(500); 
+   // }
+  //}
+  
 
+  //Serial.println(ultrasound_read()); 
+
+  delay(100);
+  
 }
+
