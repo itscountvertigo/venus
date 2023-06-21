@@ -33,7 +33,7 @@ int detect_tape() {
     else {
       // Cliff detected
       spin_right_rad(PI/2);
-      move_forward_ms(100);
+//      move_forward_ms(100);
     }
   }
   else {
@@ -67,8 +67,8 @@ void find_corner()
 void roomba() // repeatedly call this function in main until end of sequence
 {
   move_forward_ms(RMB_FWD_MS);
-  spin_left_rad(PI/2);
+  spin_left_ms(1000);
   move_forward_until_edge();
-  spin_right_rad(PI/2);
+    spin_right_rad(1000);
   move_forward_ms(RMB_FWD_MS);
 }

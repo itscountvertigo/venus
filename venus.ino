@@ -40,6 +40,10 @@ void move_forward_ms(float ms);
 void move_forward_until_edge();
 void spin_right_rad(float rad);
 void spin_left_rad(float rad);
+void spin_right_ms(float ms);
+void spin_left_ms(float ms);
+
+void setMotorPolarity (bool Polarity);
 
 long ultrasound_read();
 
@@ -52,11 +56,33 @@ void setup()
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
   pinMode(A2, INPUT); 
+
+  pinMode(4, OUTPUT);
+
+  setMotorPolarity(1);
 }  
 
 void loop()
 {
-  move_forward_ms(1000); 
+  move_forward_until_edge();
+//  spin_right_ms(600);
+
+//  move_forward_ms(10000);
+
+  for (int i = 0; i < 5; i++) {
+    setMotorPolarity(0);
+    delay(2500);
+
+    setMotorPolarity(1);
+    delay(500);
+  }
+
+  setMotorPolarity(0);
+
+  delay(2000);
+  return 0;
+
+//  roomba();
   
   Serial.println("X: ");
   Serial.println(current_pos.x);
@@ -64,7 +90,7 @@ void loop()
   Serial.println(current_pos.y);
   Serial.println("Angle: ");
   Serial.println(current_pos.angle);
-  delay(2000); 
+//  delay(2000);
 
    
   //detect_cliff();
@@ -78,6 +104,6 @@ void loop()
 
   //Serial.println(ultrasound_read()); 
 
-  delay(100);
+//  delay(100);
   
 }

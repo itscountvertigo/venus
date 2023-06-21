@@ -1,6 +1,6 @@
 // 1 => forwards, 0 => backwards
 void setMotorPolarity (bool Polarity) {
-    const int intakePin = 3;
+    const int intakePin = 4;
     if (Polarity == 0) {
         digitalWrite(intakePin, HIGH);
     } else {
